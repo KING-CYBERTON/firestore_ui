@@ -1,30 +1,7 @@
-FROM ubuntu:20.04 as builder
+FROM educative1/ff1
 
-ENV TZ=Asia/Dubai
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN wget --quiet -O sdk.install.sh "https://get.sdkman.io" && \
+    bash -c "bash ./sdk.install.sh > /dev/null && source ~/.sdkman/bin/sdkman-init.sh && sdk install kotlin && sdk install java 11.0.2-open && sdk install gradle 7.5 && export JAVA_HOME=/root/.sdkman/candidates/java/current/ && cd /tmp/sample/android && gradle wrapper --build-cache && cd .. && flutter pub get && cd android && gradle assembleDebug --build-cache && cd .. && flutter build apk --debug" && \
+    rm -f sdk.install.sh
 
-RUN apt update && apt install -y curl git unzip xz-utils zip libglu1-mesa openjdk-8-jdk wget
-RUN useradd -ms /bin/bash user
-USER user
-WORKDIR /home/user
-
-#Installing Android SDK
-RUN mkdir -p Android/sdk
-ENV ANDROID_SDK_ROOT /home/user/Android/sdk
-RUN mkdir -p .android && touch .android/repositories.cfg
-RUN wget -O sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
-RUN unzip sdk-tools.zip && rm sdk-tools.zip
-RUN mv tools Android/sdk/tools
-RUN cd Android/sdk/tools/bin && yes | ./sdkmanager --licenses
-RUN cd Android/sdk/tools/bin && ./sdkmanager "build-tools;29.0.2" "patcher;v4" "platform-tools" "platforms;android-29" "sources;android-29"
-ENV PATH "$PATH:/home/user/Android/sdk/platform-tools"
-
-#Installing Flutter SDK
-RUN git clone https://github.com/flutter/flutter.git
-ENV PATH "$PATH:/home/user/flutter/bin"
-RUN flutter channel stable
 RUN flutter upgrade
-RUN flutter doctor
-
-RUN git clone https://github.com/KING-CYBERTON/firestore_ui.git
-RUN cd flutter_phone_test && flutter run
