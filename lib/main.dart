@@ -1,13 +1,11 @@
 import 'package:firestore_ui/Views/Splash.dart';
 import 'package:flutter/material.dart';
-
 import 'package:firestore_ui/Views/Profile.dart';
 import 'package:firestore_ui/Views/Form.dart';
 import 'package:get/get.dart';
 
-
 void main() async {
-    runApp(const MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +25,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/Profile', page: () => UserProfileScreen()),
         GetPage(name: '/Form', page: () => ProfileTab()),
       ],
-      initialRoute: '/Form',
+      initialRoute: 'Form',
     );
   }
 }
